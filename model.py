@@ -74,7 +74,10 @@ class DCGAN(object):
       self.data_X, self.data_y = self.load_mnist()
       self.c_dim = self.data_X[0].shape[-1]
     else:
-      self.data = glob(os.path.join("./data", self.dataset_name, self.input_fname_pattern))
+      self.data = []
+      for subdir, dirs, files in os.walk(os.path.join("./data", self.dataset_name)):
+        for f in files:
+          self.data.append(os.path.join(subdir, f))
       imreadImg = imread(self.data[0])
       if len(imreadImg.shape) >= 3: #check if image is a non-grayscale image by checking channel number
         self.c_dim = imread(self.data[0]).shape[-1]
@@ -191,8 +194,10 @@ class DCGAN(object):
       if config.dataset == 'mnist':
         batch_idxs = min(len(self.data_X), config.train_size) // config.batch_size
       else:      
-        self.data = glob(os.path.join(
-          "./data", config.dataset, self.input_fname_pattern))
+        self.data = []
+        for subdir, dirs, files in os.walk(os.path.join("./data", self.dataset_name)):
+          for f in files:
+            self.data.append(os.path.join(subdir, f))
         batch_idxs = min(len(self.data), config.train_size) // config.batch_size
 
       for idx in xrange(0, batch_idxs):
